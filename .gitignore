@@ -1,4 +1,6 @@
 # For Joey
+data/*.pkl
+cache/*
 .DS_Store
 
 
