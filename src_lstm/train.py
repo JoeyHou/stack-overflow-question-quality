@@ -45,7 +45,7 @@ def model_fn(model_dir):
 def _get_train_data_loader(batch_size, training_dir):
     print("Get train data loader.")
 
-    train_data = pd.read_csv(os.path.join(training_dir, "train.csv"), header=None, names=None)
+    train_data = pd.read_csv(os.path.join(training_dir, "lstm_train.csv"), header=None, names=None)
 
     train_y = torch.from_numpy(train_data[[0]].values).float().squeeze()
     train_X = torch.from_numpy(train_data.drop([0], axis=1).values).long()
@@ -94,8 +94,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Training Parameters
-    parser.add_argument('--batch-size', type=int, default=512, metavar='N',
-                        help='input batch size for training (default: 512)')
+    parser.add_argument('--batch-size', type=int, default=2, metavar='N',
+                        help='input batch size for training (default: 2)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -108,6 +108,8 @@ if __name__ == '__main__':
                         help='size of the hidden dimension (default: 100)')
     parser.add_argument('--vocab_size', type=int, default=5000, metavar='N',
                         help='size of the vocabulary (default: 5000)')
+    parser.add_argument('--class_num', type=int, default=3, metavar='N',
+                        help='number of classification class (default: 3)')
 
     # SageMaker Parameters
     parser.add_argument('--hosts', type=list, default=json.loads(os.environ['SM_HOSTS']))
@@ -127,13 +129,13 @@ if __name__ == '__main__':
     train_loader = _get_train_data_loader(args.batch_size, args.data_dir)
 
     # Build the model.
-    model = LSTMClassifier(args.embedding_dim, args.hidden_dim, args.vocab_size).to(device)
+    model = LSTMClassifier(args.embedding_dim, args.hidden_dim, args.vocab_size, args.class_num).to(device)
 
     with open(os.path.join(args.data_dir, "word_dict.pkl"), "rb") as f:
         model.word_dict = pickle.load(f)
 
-    print("Model loaded with embedding_dim {}, hidden_dim {}, vocab_size {}.".format(
-        args.embedding_dim, args.hidden_dim, args.vocab_size
+    print("Model loaded with embedding_dim {}, hidden_dim {}, vocab_size {}, class_num {}.".format(
+        args.embedding_dim, args.hidden_dim, args.vocab_size, args.class_num
     ))
 
     # Train the model.

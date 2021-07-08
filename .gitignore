@@ -1,5 +1,9 @@
 # For Joey
 data/*.pkl
+data/lstm/*
+data/sklearn/*
+data/bert/*
+data/processed/*
 cache/*
 .DS_Store
 
