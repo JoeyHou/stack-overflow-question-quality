@@ -1,2 +1,2 @@
-# stack-overflow-question-quality
-The final project for Udacity Machine Learning Engineer Capstone
+# Analysis and  Modelling of Stack Overflow Question Quality
+# 
